@@ -1,3 +1,5 @@
 pyrosim/*
 pyrosim
 box.sdf
+/body.urdf
+/*.sdf
