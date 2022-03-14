@@ -26,7 +26,7 @@ class ROBOT:
             self.motors[jointName] = MOTOR(jointName)
 
         print(self.motors)
-            
+
     def Sense(self, timestep):
         for sensorName, sensor in self.sensors.items():
             sensor.Get_Value(timestep)

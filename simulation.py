@@ -26,5 +26,8 @@ class SIMULATION:
 
         exit()
 
+    def Get_Fitness(self):
+        pass 
+
     def __del__(self):
         p.disconnect()
