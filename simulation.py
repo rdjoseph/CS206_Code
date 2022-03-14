@@ -2,7 +2,7 @@ import pyrosim.pyrosim as pyrosim
 import pybullet as p
 import pybullet_data
 import time as t
-# My stimport constants as c
+import constants as c
 from robot import ROBOT
 from world import WORLD
 
@@ -17,7 +17,7 @@ class SIMULATION:
 
     def Run(self):
         """ Run the simulation """
-        for i in range(10000):
+        for i in range(c.iterations):
             t.sleep(0.001)
             p.stepSimulation()
             self.robot.Act(i)
