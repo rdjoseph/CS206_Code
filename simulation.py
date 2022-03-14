@@ -17,12 +17,14 @@ class SIMULATION:
 
     def Run(self):
         """ Run the simulation """
-        for i in range(1000):
-            t.sleep(0.05)
+        for i in range(10000):
+            t.sleep(0.001)
             p.stepSimulation()
             self.robot.Act(i)
             self.robot.Think()
             self.robot.Sense(i)
+
+        exit()
 
     def __del__(self):
         p.disconnect()
