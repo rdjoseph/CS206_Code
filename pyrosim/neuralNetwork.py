@@ -2,9 +2,10 @@ from pyrosim.neuron  import NEURON
 
 from pyrosim.synapse import SYNAPSE
 
-class NEURAL_NETWORK: 
 
-    def __init__(self,nndfFileName):
+class NEURAL_NETWORK:
+
+    def __init__(self, nndfFileName):
 
         self.neurons = {}
 
@@ -15,6 +16,8 @@ class NEURAL_NETWORK:
         for line in f.readlines():
 
             self.Digest(line)
+
+        print(self.synapses)
 
         f.close()
 
@@ -33,7 +36,7 @@ class NEURAL_NETWORK:
             if self.neurons[name].Is_Sensor_Neuron():
                 self.neurons[name].Update_Sensor_Neuron()
             else:
-                self.neurons[name].Update_Hidden_Or_Motor_Neuron()
+                self.neurons[name].Update_Hidden_Or_Motor_Neuron(self.neurons, self.synapses)
 
     def Get_Neuron_Names(self):
         # .keys() returns an iterator that has some funky properties, so just for consistencies sake I like to cast it to a list when not immediately using it as an iterator
