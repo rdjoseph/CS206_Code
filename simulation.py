@@ -9,6 +9,7 @@ from world import WORLD
 
 class SIMULATION:
     def __init__(self, directOrGUI):
+        self.directOrGUI = directOrGUI
         if directOrGUI == "GUI":
             self.physicsClient = p.connect(p.GUI)
         else:
@@ -21,7 +22,8 @@ class SIMULATION:
     def Run(self):
         """ Run the simulation """
         for i in range(c.iterations):
-            t.sleep(0.001)
+            if self.directOrGUI == "GUI":
+                t.sleep(0.01)
             p.stepSimulation()
             self.robot.Act(i)
             self.robot.Think()
