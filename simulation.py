@@ -8,7 +8,7 @@ from world import WORLD
 
 
 class SIMULATION:
-    def __init__(self, directOrGUI):
+    def __init__(self, directOrGUI, solutionID):
         self.directOrGUI = directOrGUI
         if directOrGUI == "GUI":
             self.physicsClient = p.connect(p.GUI)
@@ -17,13 +17,13 @@ class SIMULATION:
         p.setAdditionalSearchPath(pybullet_data.getDataPath())
         p.setGravity(0, 0, -9.8)
         self.world = WORLD()
-        self.robot = ROBOT()
+        self.robot = ROBOT(solutionID)
 
     def Run(self):
         """ Run the simulation """
         for i in range(c.iterations):
             if self.directOrGUI == "GUI":
-                t.sleep(0.01)
+                t.sleep(c.timepause)
             p.stepSimulation()
             self.robot.Act(i)
             self.robot.Think()
