@@ -44,19 +44,20 @@ class SOLUTION():
         c = random.randint(0, 1)
         self.weights[r, c] = random.random() * 2 - 1
 
-    def Create_Robot(self):
-        pyrosim.Start_URDF("body.urdf")
-
-        pyrosim.Send_Cube(name="Torso", pos=[1.5, 0, 1.5], size=[self.length,  self.width,  self.height])
-        # BackLeg absolute position: [0.5, 0, 0.5]
-        pyrosim.Send_Joint(name="Torso_BackLeg", parent="Torso", child="BackLeg",  type="revolute",  position=[1,  0,  1])
-        pyrosim.Send_Cube(name="BackLeg", pos=[-0.5, 0, -0.5], size=[self.length,  self.width,  self.height])
 
         # Note: Joints & Links are relative to their upstream joints/links. You might think, ah, so Torso_FrontLeg is relative to Torso_BackLeg. No, you fool. There is no upstream joint of Torso_FrontLeg because joint/link relationships are like a tree, ie (torso (joint "torso_backleg" backleg) (joint "torso_frontleg" frontleg)). So we define torso_frontleg as an absolute position, and frontleg is relative to that.
         # Torso_FrontLeg joint absolute position [2,0,1]
         # FrontLeg absolute position [2.5,0,0.5]
-        pyrosim.Send_Joint(name="Torso_FrontLeg", parent="Torso", child="FrontLeg", type="revolute", position=[2, 0, 1])
-        pyrosim.Send_Cube(name="FrontLeg", pos=[0.5, 0, -0.5], size=[self.length, self.width, self.height])
+    def Create_Robot(self):
+        pyrosim.Start_URDF("body.urdf")
+
+        pyrosim.Send_Cube(name="Torso", pos=[0, 0, 1], size=[self.length,  self.width,  self.height])
+        # BackLeg absolute position: [0.5, 0, 0.5]
+        pyrosim.Send_Joint(name="Torso_BackLeg", parent="Torso", child="BackLeg",  type="revolute",  position=[0, -0.5, 1])
+        pyrosim.Send_Cube(name="BackLeg", pos=[0, -0.5, 0], size=[0.2, 1.0, 0.2])
+
+        pyrosim.Send_Joint(name="Torso_FrontLeg", parent="Torso", child="FrontLeg", type="revolute", position=[0, 0.5, 1])
+        pyrosim.Send_Cube(name="FrontLeg", pos=[0, 0.5, 0], size=[0.2, 1, 0.2])
         pyrosim.End()
 
     def Create_World(self):
