@@ -3,6 +3,7 @@ import random
 import os
 import time
 import pyrosim.pyrosim as pyrosim
+from constants import numSensorNeurons, numMotorNeurons
 
 
 class SOLUTION():
@@ -78,8 +79,8 @@ class SOLUTION():
 
         # Set up synapses with weights
         # As an aside, I am using literal lists over range() to prevent tripping on the [inclusive,exclusive) arguments and accidentally miscounting. It's uglier but less error prone for small ranges
-        for currRow in [0, 1, 2]:  # Sensors
-            for currCol in [0, 1]:  # Motors
+        for currRow in range(numSensorNeurons):
+            for currCol in range(numMotorNeurons):
                 pyrosim.Send_Synapse(sourceNeuronName=currRow,
                                      targetNeuronName=(currCol + 3),
                                      weight=self.weights[currRow][currCol])
