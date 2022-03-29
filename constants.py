@@ -5,5 +5,5 @@ iterations = 10000
 numberOfGenerations = 1
 populationSize = 1
 timepause = 0.001
-numSensorNeurons = 3
-numMotorNeurons = 2
+numSensorNeurons = 5
+numMotorNeurons = 4

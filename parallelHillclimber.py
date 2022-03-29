@@ -60,4 +60,5 @@ class PARALLEL_HILL_CLIMBER():
         
     def Show_Best(self):
         bestSol = min(list(self.parents.values()), key = lambda x: x.fitness)
+        print(bestSol.weights)
         bestSol.Start_Simulation("GUI")

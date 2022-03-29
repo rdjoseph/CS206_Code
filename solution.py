@@ -13,9 +13,9 @@ class SOLUTION():
         self.width = 1
         self.height = 1
 
-        # Our initial solution is a 3 by 2 matrix of random floating point values
-        self.weights = numpy.random.rand(3, 2)
-        self.weights = self.weights * 2 - 1
+        # Our initial solution is a matrix of random floating point values
+        self.weights = numpy.random.rand(numSensorNeurons, numMotorNeurons)
+        self.weights = self.weights * 2 - 1  # Normalize
 
     def Set_ID(self, id):
         self.myID = id
@@ -53,11 +53,19 @@ class SOLUTION():
 
         pyrosim.Send_Cube(name="Torso", pos=[0, 0, 1], size=[self.length,  self.width,  self.height])
         # BackLeg absolute position: [0.5, 0, 0.5]
-        pyrosim.Send_Joint(name="Torso_BackLeg", parent="Torso", child="BackLeg",  type="revolute",  position=[0, -0.5, 1])
+        pyrosim.Send_Joint(name="Torso_BackLeg", parent="Torso", child="BackLeg",  type="revolute",  position=[0, -0.5, 1], jointAxis = "1 0 0")
         pyrosim.Send_Cube(name="BackLeg", pos=[0, -0.5, 0], size=[0.2, 1.0, 0.2])
 
-        pyrosim.Send_Joint(name="Torso_FrontLeg", parent="Torso", child="FrontLeg", type="revolute", position=[0, 0.5, 1])
+        pyrosim.Send_Joint(name="Torso_FrontLeg", parent="Torso", child="FrontLeg", type="revolute", position=[0, 0.5, 1], jointAxis = "1 0 0")
         pyrosim.Send_Cube(name="FrontLeg", pos=[0, 0.5, 0], size=[0.2, 1, 0.2])
+
+        pyrosim.Send_Joint(name="Torso_LeftLeg", parent="Torso", child="LeftLeg", type="revolute", position=[-0.5, 0, 1], jointAxis = "0 1 0")
+        pyrosim.Send_Cube(name="LeftLeg", pos=[-0.5, 0, 0], size=[1.0, 0.2, 0.2])
+
+        pyrosim.Send_Joint(name="Torso_RightLeg", parent="Torso", child="RightLeg", type="revolute", position=[0.5, 0, 1], jointAxis = "0 1 0")
+        pyrosim.Send_Cube(name="RightLeg", pos=[0.5, 0, 0], size=[1.0, 0.2, 0.2])
+
+        
         pyrosim.End()
 
     def Create_World(self):
@@ -74,16 +82,22 @@ class SOLUTION():
         pyrosim.Send_Sensor_Neuron(name=0, linkName="Torso")
         pyrosim.Send_Sensor_Neuron(name=1, linkName="BackLeg")
         pyrosim.Send_Sensor_Neuron(name=2, linkName="FrontLeg")
+        pyrosim.Send_Sensor_Neuron(name=3, linkName="LeftLeg")
+        pyrosim.Send_Sensor_Neuron(name=4, linkName="RightLeg")
+        
         # Motor Neurons
-        pyrosim.Send_Motor_Neuron(name=3, jointName="Torso_BackLeg")
-        pyrosim.Send_Motor_Neuron(name=4, jointName="Torso_FrontLeg")
+        pyrosim.Send_Motor_Neuron(name=5, jointName="Torso_BackLeg")
+        pyrosim.Send_Motor_Neuron(name=6, jointName="Torso_FrontLeg")
+        pyrosim.Send_Motor_Neuron(name=7, jointName="Torso_LeftLeg")
+        pyrosim.Send_Motor_Neuron(name=8, jointName="Torso_RightLeg")
 
         # Set up synapses with weights
         # As an aside, I am using literal lists over range() to prevent tripping on the [inclusive,exclusive) arguments and accidentally miscounting. It's uglier but less error prone for small ranges
-        for currRow in range(numSensorNeurons):
-            for currCol in range(numMotorNeurons):
+        for currRow in range(numSensorNeurons): # 4
+            for currCol in range(numMotorNeurons): # 3
+                print("Setting up synapse for neuron " + str(currCol + numSensorNeurons))
                 pyrosim.Send_Synapse(sourceNeuronName=currRow,
-                                     targetNeuronName=(currCol + 3),
+                                     targetNeuronName=(currCol + numSensorNeurons),
                                      weight=self.weights[currRow][currCol])
 
         pyrosim.End()
