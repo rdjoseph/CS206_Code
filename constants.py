@@ -1,9 +1,10 @@
 import numpy as np
 
 pi = np.pi
-iterations = 10000
-numberOfGenerations = 1
-populationSize = 1
+iterations = 1000
+numberOfGenerations = 10
+populationSize = 10
 timepause = 0.001
-numSensorNeurons = 8
-numMotorNeurons = 7
+numSensorNeurons = 9
+numMotorNeurons = 8
+motorJointRange = 0.2
