@@ -1,3 +1,8 @@
 box.sdf
 /*.urdf
 /*.sdf
+*.py~
+__pycache__/
+pyrosim/__pycache__/*
+data/
+*.txt
