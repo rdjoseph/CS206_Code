@@ -8,14 +8,14 @@ from constants import motorJointRange
 
 
 class ROBOT:
-    def __init__(self, solutionID):
+    def __init__(self, solutionID, worldID):
         self.myID = solutionID
         self.robot = p.loadURDF("body.urdf")
         pyrosim.Prepare_To_Simulate(self.robot)
-        self.nn = NEURAL_NETWORK("brain" + str(solutionID) + ".nndf")
+        self.nn = NEURAL_NETWORK("brain" + str(solutionID) + worldID + ".nndf")
         self.Prepare_To_Sense()
         self.Prepare_To_Act()
-        os.system("rm brain" + str(solutionID) + ".nndf")
+        os.system("rm brain" + str(solutionID) + worldID + ".nndf")
 
     def Prepare_To_Sense(self):
         self.sensors = {}

@@ -8,7 +8,7 @@ from world import WORLD
 
 
 class SIMULATION:
-    def __init__(self, directOrGUI, solutionID):
+    def __init__(self, directOrGUI, solutionID, worldID):
         self.directOrGUI = directOrGUI
         if directOrGUI == "GUI":
             self.physicsClient = p.connect(p.GUI)
@@ -16,8 +16,10 @@ class SIMULATION:
             self.physicsClient = p.connect(p.DIRECT)
         p.setAdditionalSearchPath(pybullet_data.getDataPath())
         p.setGravity(0, 0, -9.8)
-        self.world = WORLD()
-        self.robot = ROBOT(solutionID)
+        self.world = WORLD(worldID)
+        # We write each neural net solution file out twice, ie solution42B.nndf
+        # So we give the robot its corresponding worldID
+        self.robot = ROBOT(solutionID, worldID)
 
     def Run(self):
         """ Run the simulation """

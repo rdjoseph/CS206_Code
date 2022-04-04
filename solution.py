@@ -24,8 +24,10 @@ class SOLUTION():
         """ Launch asynchronous process to evaluate solution """
         self.Create_Robot()
         self.Create_World()
-        self.Create_Brain()
-        os.system("python simulate.py " + directOrGUI + " " + str(self.myID) + " 2&>1 &")
+        self.Create_Brain("brain" + str(self.myID) + "A.nndf")
+        self.Create_Brain("brain" + str(self.myID) + "B.nndf")
+        os.system("python simulate.py " + directOrGUI + " " + str(self.myID) + " A 2&>1 &")
+        os.system("python simulate.py " + directOrGUI + " " + str(self.myID) + " B 2&>1 &")
 
     def Wait_For_Simulation_To_End(self):
         """ Wait for fitness process to end, read its fitness from filesystem, store in self.fitness """
@@ -48,6 +50,7 @@ class SOLUTION():
         # Torso_FrontLeg joint absolute position [2,0,1]
         # FrontLeg absolute position [2.5,0,0.5]
     def Create_Robot(self):
+        """ Creates a quadraped robot, stored in body.urdf """
         pyrosim.Start_URDF("body.urdf")
 
         pyrosim.Send_Cube(name="Torso", pos=[0, 0, 1], size=[self.length,  self.width,  self.height])
@@ -81,15 +84,25 @@ class SOLUTION():
         pyrosim.End()
 
     def Create_World(self):
-        pyrosim.Start_SDF("world.sdf")
+        """ Constructs two world files, WorldA.sdf & WorldB.sdf, each with a block placed (respectively) 5 blocks ahead/behind of [0,0,0] on the y axis """
+        pyrosim.Start_SDF("worldA.sdf")
         pyrosim.Send_Cube(name="Box",
-                          pos=[5, 5, 0.5],
+                          pos=[0, 5, 0.5],
                           size=[self.length, self.width, self.height])
 
         pyrosim.End()
+        
+        pyrosim.Start_SDF("worldB.sdf")
+        pyrosim.Send_Cube(name="Box",
+                          pos=[0, -5, 0.5],
+                          size=[self.length, self.width, self.height])
 
-    def Create_Brain(self):
-        pyrosim.Start_NeuralNetwork("brain" + str(self.myID) + ".nndf")
+        pyrosim.End()
+        
+
+    def Create_Brain(self, filename):
+        """ Creates a neural network, stored in filename """ 
+        pyrosim.Start_NeuralNetwork(filename)
         # Sensors
         pyrosim.Send_Sensor_Neuron(name=0, linkName="Torso")
         pyrosim.Send_Sensor_Neuron(name=1, linkName="BackLeg")
