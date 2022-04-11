@@ -1,4 +1,5 @@
 import numpy
+import statistics as stat
 import random
 import os
 import time
@@ -31,14 +32,21 @@ class SOLUTION():
 
     def Wait_For_Simulation_To_End(self):
         """ Wait for fitness process to end, read its fitness from filesystem, store in self.fitness """
-        fitnessFile = "fitness" + str(self.myID) + ".txt"
-        while not os.path.exists(fitnessFile):
+        fitnessAFile = "fitness" + str(self.myID) + "A.txt"
+        fitnessBFile = "fitness" + str(self.myID) + "B.txt"
+        while not os.path.exists(fitnessAFile) or not os.path.exists(fitnessBFile):
             time.sleep(0.001)
 
-        with open(fitnessFile, "r") as file:
-            self.fitness = float(file.read())
+        with open(fitnessAFile, "r") as file:
+            fitnessA = float(file.read())
 
-        os.system("rm " + fitnessFile)
+        with open(fitnessBFile, "r") as file:
+            fitnessB = float(file.read())
+
+        self.fitness = stat.mean([fitnessA, fitnessB])
+
+        os.system("rm " + fitnessAFile)
+        os.system("rm " + fitnessBFile)
     
     def Mutate(self):
         r = random.randint(0, 2)
