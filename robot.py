@@ -10,6 +10,7 @@ from constants import motorJointRange
 class ROBOT:
     def __init__(self, solutionID, worldID):
         self.myID = solutionID
+        self.worldID = worldID
         self.robot = p.loadURDF("body.urdf")
         pyrosim.Prepare_To_Simulate(self.robot)
         self.nn = NEURAL_NETWORK("brain" + str(solutionID) + worldID + ".nndf")
@@ -49,4 +50,4 @@ class ROBOT:
         fitnessFile = "tmp" + str(self.myID) + ".txt"
         with open(fitnessFile, "w") as file:
             file.write(str(xCoordinateOfLinkZero))
-        os.system("mv " + fitnessFile + " fitness" + str(self.myID) + ".txt")
+        os.system("mv " + fitnessFile + " fitness" + str(self.worldID) + str(self.myID) + ".txt")
