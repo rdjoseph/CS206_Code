@@ -47,8 +47,9 @@ class ROBOT:
         """ Calculates a robot's fitness, post-simulation, as its absolute y coordinate """
         stateOfLinkZero = p.getLinkState(self.robot, 0)
         positionOfLinkZero = stateOfLinkZero[0]
-        xCoordinateOfLinkZero = abs(positionOfLinkZero[1])  # positionOfLinkZero is a tuple (x,y,z)
-        fitnessFile = "tmp" + str(self.myID) + ".txt"
+        yCoordinateOfLinkZero = abs(positionOfLinkZero[1])  # positionOfLinkZero is a tuple (x,y,z)
+        fitnessFile = "tmp" + str(self.myID) + str(self.worldID) + ".txt"
         with open(fitnessFile, "w") as file:
-            file.write(str(xCoordinateOfLinkZero))
+            file.write(str(yCoordinateOfLinkZero))
+        
         os.system("mv " + fitnessFile + " fitness" + str(self.myID) + str(self.worldID) + ".txt")
