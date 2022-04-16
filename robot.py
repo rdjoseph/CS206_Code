@@ -44,10 +44,11 @@ class ROBOT:
                 self.motors[jointName].Set_Value(self.robot, desiredAngle)
 
     def Get_Fitness(self):
+        """ Calculates a robot's fitness, post-simulation, as its absolute y coordinate """
         stateOfLinkZero = p.getLinkState(self.robot, 0)
         positionOfLinkZero = stateOfLinkZero[0]
-        xCoordinateOfLinkZero = positionOfLinkZero[0]
+        xCoordinateOfLinkZero = abs(positionOfLinkZero[1])  # positionOfLinkZero is a tuple (x,y,z)
         fitnessFile = "tmp" + str(self.myID) + ".txt"
         with open(fitnessFile, "w") as file:
             file.write(str(xCoordinateOfLinkZero))
-        os.system("mv " + fitnessFile + " fitness" + str(self.worldID) + str(self.myID) + ".txt")
+        os.system("mv " + fitnessFile + " fitness" + str(self.myID) + str(self.worldID) + ".txt")

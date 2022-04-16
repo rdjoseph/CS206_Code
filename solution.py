@@ -3,6 +3,7 @@ import statistics as stat
 import random
 import os
 import time
+import sys
 import pyrosim.pyrosim as pyrosim
 from constants import numSensorNeurons, numMotorNeurons
 
@@ -50,7 +51,9 @@ class SOLUTION():
             fitnessB = float(file.read())
 
         self.fitness = stat.mean([fitnessA, fitnessB])
+        print("\n\n ID" + str(self.myID) + " aggregate fitness: " + str(self.fitness) + "\n\n")
 
+        sys.exit()
         os.system("rm " + fitnessAFile)
         os.system("rm " + fitnessBFile)
     

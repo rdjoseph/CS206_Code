@@ -31,7 +31,7 @@ class PARALLEL_HILL_CLIMBER():
         self.Select()
 
     def Print(self):
-        print("")
+        print("Generational Fitness: ")
         for k, v in self.parents.items():
             print(str(k) + ") ", end='')
             print("Parent: " + str(self.parents[k].fitness), end='')
