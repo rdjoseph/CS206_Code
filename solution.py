@@ -11,10 +11,7 @@ from constants import numSensorNeurons, numMotorNeurons
 class SOLUTION():
     def __init__(self, id):
         self.myID = id
-        self.length = 1
-        self.width = 1
-        self.height = 1
-
+        
         # Our initial solution is a matrix of random floating point values
         self.weights = numpy.random.rand(numSensorNeurons, numMotorNeurons)
         self.weights = self.weights * 2 - 1  # Normalize
@@ -33,9 +30,11 @@ class SOLUTION():
         self.Create_Brain("brain" + str(self.myID) + "A.nndf")
         self.Create_Brain("brain" + str(self.myID) + "B.nndf")
         print("Displaying world A...")
-        os.system("python simulate.py " + directOrGUI + " " + str(self.myID) + " A 2&>1")
+        os.system("python simulate.py GUI " + str(self.myID) + " A")
+        time.sleep(1)
+        
         print("Displaying world B...")
-        os.system("python simulate.py " + directOrGUI + " " + str(self.myID) + " B 2&>1")
+        os.system("python simulate.py GUI " + str(self.myID) + " B")
 
     def Wait_For_Simulation_To_End(self):
         """ Wait for fitness process to end, read its fitness from filesystem, store in self.fitness """
@@ -50,16 +49,23 @@ class SOLUTION():
         with open(fitnessBFile, "r") as file:
             fitnessB = float(file.read())
 
-        self.fitness = stat.mean([fitnessA, fitnessB])
-        print("\n\n ID" + str(self.myID) + " aggregate fitness: " + str(self.fitness) + "\n\n")
+        # We want to reward negative movement in World A, and positive movement in World B 
+        self.fitness = (-1 * fitnessA) + fitnessB
 
-        sys.exit()
+        # Tried this to penalize large differences between results, ie robot just stops after hitting obstacle in
+        # one world. Did not yield great results
+        # self.fitness = (-1 * fitnessA) + fitnessB / max(abs(abs(fitnessA) - abs(fitnessB)), 1)
+
+
+        # self.fitness = stat.mean([(-1 * fitnessA), fitnessB])
+        print("ID: " + str(self.myID) + " aggregate fitness: " + str(self.fitness))
+
         os.system("rm " + fitnessAFile)
         os.system("rm " + fitnessBFile)
-    
+
     def Mutate(self):
-        r = random.randint(0, 2)
-        c = random.randint(0, 1)
+        r = random.randint(0, numSensorNeurons)
+        c = random.randint(0, numMotorNeurons)
         self.weights[r, c] = random.random() * 2 - 1
 
     def Create_Brain(self, filename):
@@ -86,11 +92,9 @@ class SOLUTION():
         pyrosim.Send_Motor_Neuron(name=15, jointName="LeftLeg_LeftLowerLeg")
         pyrosim.Send_Motor_Neuron(name=16, jointName="RightLeg_RightLowerLeg")
         
-
         # Set up synapses with weights
-        # As an aside, I am using literal lists over range() to prevent tripping on the [inclusive,exclusive) arguments and accidentally miscounting. It's uglier but less error prone for small ranges
-        for currRow in range(numSensorNeurons): # 4
-            for currCol in range(numMotorNeurons): # 3
+        for currRow in range(numSensorNeurons):
+            for currCol in range(numMotorNeurons):
                 pyrosim.Send_Synapse(sourceNeuronName=currRow,
                                      targetNeuronName=(currCol + numSensorNeurons),
                                      weight=self.weights[currRow][currCol])

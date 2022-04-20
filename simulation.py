@@ -9,6 +9,8 @@ from world import WORLD
 
 class SIMULATION:
     def __init__(self, directOrGUI, solutionID, worldID):
+        self.solutionID = solutionID
+        self.worldID = worldID
         self.directOrGUI = directOrGUI
         if directOrGUI == "GUI":
             self.physicsClient = p.connect(p.GUI)
@@ -30,6 +32,10 @@ class SIMULATION:
             self.robot.Act(i)
             self.robot.Think()
             self.robot.Sense(i)
+
+        if self.directOrGUI == "GUI":
+            print("Final neuron values of " + self.solutionID + " in world " + self.worldID)
+            self.robot.nn.Print()
 
     def Get_Fitness(self):
         return self.robot.Get_Fitness()

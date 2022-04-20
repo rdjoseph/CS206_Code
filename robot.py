@@ -34,7 +34,6 @@ class ROBOT:
 
     def Think(self):
         self.nn.Update()
-        # self.nn.Print()
 
     def Act(self, timestep):
         for neuronName in self.nn.Get_Neuron_Names():
@@ -44,12 +43,15 @@ class ROBOT:
                 self.motors[jointName].Set_Value(self.robot, desiredAngle)
 
     def Get_Fitness(self):
-        """ Calculates a robot's fitness, post-simulation, as its absolute y coordinate """
-        stateOfLinkZero = p.getLinkState(self.robot, 0)
-        positionOfLinkZero = stateOfLinkZero[0]
-        yCoordinateOfLinkZero = abs(positionOfLinkZero[1])  # positionOfLinkZero is a tuple (x,y,z)
+        """
+        Calculates a robot's fitness, post-simulation, as it's position on the
+        y axis of the world
+        """
+        basePositionAndOrientation = p.getBasePositionAndOrientation(self.robot)
+        basePosition = basePositionAndOrientation[0]
+        yPosition = basePosition[1]
         fitnessFile = "tmp" + str(self.myID) + str(self.worldID) + ".txt"
         with open(fitnessFile, "w") as file:
-            file.write(str(yCoordinateOfLinkZero))
-        
+            file.write(str(yPosition))
+ 
         os.system("mv " + fitnessFile + " fitness" + str(self.myID) + str(self.worldID) + ".txt")
