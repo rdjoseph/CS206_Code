@@ -3,6 +3,7 @@ import os
 import solution
 import copy
 import pyrosim.pyrosim as pyrosim
+import numpy as np
 from constants import numberOfGenerations, populationSize
 
 
@@ -12,6 +13,7 @@ class PARALLEL_HILL_CLIMBER():
         os.system("rm fitness*.txt")
         os.system("rm body.urdf")
         # Because the worlds & robot body are only constructed once, I moved them to PHC. No sense writing the same files to disk 100 times per evolutionary session
+        self.statistics = np.zeros((numberOfGenerations, populationSize))
         self.Create_Robot()
         self.Create_World()
         self.parents = {}
@@ -21,9 +23,13 @@ class PARALLEL_HILL_CLIMBER():
             self.nextAvailableID += 1
 
     def Evolve(self):
+        # Set up initial generation
         self.Evaluate(self.parents)
         for currentGeneration in range(numberOfGenerations):
             self.Evolve_For_One_Generation()
+            # Record our fitness stats 
+            for idx, parent in enumerate(self.parents):
+                self.statistics[currentGeneration][idx] = parent.fitness
 
     def Evolve_For_One_Generation(self):
         self.Spawn()
@@ -72,7 +78,9 @@ class PARALLEL_HILL_CLIMBER():
         print(bestSol.fitness)
         input("To proceed to display, strike any key")
         bestSol.Display_Best()
-        # bestSol.Start_Simulation("GUI")
+
+    def Write_Statistics(self):
+        np.save("generational_fitness.npy", self.statistics)
 
     # Note: Joints & Links are relative to their upstream joints/links. You might think, ah, so Torso_FrontLeg is relative to Torso_BackLeg. No, you fool. There is no upstream joint of Torso_FrontLeg because joint/link relationships are like a tree, ie (torso (joint "torso_backleg" backleg) (joint "torso_frontleg" frontleg)). So we define torso_frontleg as an absolute position, and frontleg is relative to that.
     # Torso_FrontLeg joint absolute position [2,0,1]

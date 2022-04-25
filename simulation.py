@@ -2,6 +2,7 @@ import pyrosim.pyrosim as pyrosim
 import pybullet as p
 import pybullet_data
 import time as t
+import numpy as np
 import constants as c
 from robot import ROBOT
 from world import WORLD
@@ -32,6 +33,15 @@ class SIMULATION:
             self.robot.Act(i)
             self.robot.Think()
             self.robot.Sense(i)
+
+        # TODO REMOVE: This is a temporary hack because of how Josh's multiprocessing works
+        # To get the footprint data out for our footprint graph
+        if self.directOrGUI == "GUI":
+            footsteps = np.array([self.robot.sensors['FrontLowerLeg'],
+                                  self.robot.sensors['BackLowerLeg'],
+                                  self.robot.sensors['LeftLowerLeg'],
+                                  self.robot.sensors['RightLowerLeg']]
+            np.save(f"footsteps{self.solutionID}{self.worldID}.npy", footsteps)
 
         if self.directOrGUI == "GUI":
             print("\nFinal neuron values of " + self.solutionID + " in world " + self.worldID)
