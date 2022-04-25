@@ -34,7 +34,7 @@ class SIMULATION:
             self.robot.Sense(i)
 
         if self.directOrGUI == "GUI":
-            print("Final neuron values of " + self.solutionID + " in world " + self.worldID)
+            print("\nFinal neuron values of " + self.solutionID + " in world " + self.worldID)
             self.robot.nn.Print()
 
     def Get_Fitness(self):

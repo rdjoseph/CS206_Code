@@ -115,14 +115,14 @@ class PARALLEL_HILL_CLIMBER():
         """ Constructs two world files, WorldA.sdf & WorldB.sdf, each with a block placed (respectively) 5 blocks ahead/behind of [0,0,0] on the y axis """
         pyrosim.Start_SDF("worldA.sdf")
         pyrosim.Send_Cube(name="Box",
-                          pos=[0, 2, 0.5],
+                          pos=[0, 2.5, 0.5],
                           size=[1, 1, 1])
 
         pyrosim.End()
         
         pyrosim.Start_SDF("worldB.sdf")
         pyrosim.Send_Cube(name="Box",
-                          pos=[0, -2, 0.5],
+                          pos=[0, -2.5, 0.5],
                           size=[1, 1, 1])
 
         pyrosim.End()

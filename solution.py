@@ -44,28 +44,48 @@ class SOLUTION():
             time.sleep(0.001)
 
         with open(fitnessAFile, "r") as file:
-            fitnessA = float(file.read())
+            vals = file.read().split(",")
+            A_touched_block = bool(int(vals[0]))
+            A_y_position = float(vals[1])
 
         with open(fitnessBFile, "r") as file:
-            fitnessB = float(file.read())
+            vals = file.read().split(",")
+            B_touched_block = bool(int(vals[0]))
+            B_y_position = float(vals[1])
 
-        # We want to reward negative movement in World A, and positive movement in World B 
-        self.fitness = (-1 * fitnessA) + fitnessB
+        dA = -1 * (A_y_position - 2.5)  # Diff btwn robo & block in World A, only rewarding negative movement
+        dB = B_y_position + 2.5         # Diff btwn robo & block in World B, only rewarding postive movement
 
-        # Tried this to penalize large differences between results, ie robot just stops after hitting obstacle in
-        # one world. Did not yield great results
-        # self.fitness = (-1 * fitnessA) + fitnessB / max(abs(abs(fitnessA) - abs(fitnessB)), 1)
+        if A_touched_block and B_touched_block:
+            self.fitness = 2 + dA + dB
+            # F = 2 + d1 + d2
+            # We add two because even in a case where it did not get away from the block,
+            # we want to favor that over not touching the block at all
+        # In the case where a robot has touched a block, we want to start rewarding it for moving *away* from the block, not towards
+        # I am hoping the ratcheting nature of the PHC will allow me to lead the robot by the nose in this fashion
+        # IE first developing walking, then bumping into a block, then fleeing from the block, leading to bumping into both, etc 
+        elif A_touched_block:
+            self.fitness = 1 + (dA / 100)
+        elif B_touched_block:
+            self.fitness = 1 + (dB / 100)
+        else:
+            # In experiments, I've found that evolution gets "stuck"
+            # There's not enough granularity in steps for evolution to
+            # meaningfully improve in one mutation step
+            # This is not 'proper' scaling but I've never seen a robot achieve
+            # more than 30 steps away from origin in 5K timesteps, so this
+            # should work fine
+            self.fitness = (dA + dB) / 100
 
 
-        # self.fitness = stat.mean([(-1 * fitnessA), fitnessB])
-        print("ID: " + str(self.myID) + " aggregate fitness: " + str(self.fitness))
-
+        print(f"{self.myID} aggr fit: {self.fitness}; touch A? {A_touched_block}; touch B? {B_touched_block}")
         os.system("rm " + fitnessAFile)
         os.system("rm " + fitnessBFile)
 
     def Mutate(self):
-        r = random.randint(0, numSensorNeurons)
-        c = random.randint(0, numMotorNeurons)
+        # random.randint(a,b) is inclusive of b, unlike most Python things
+        r = random.randint(0, numSensorNeurons - 1)
+        c = random.randint(0, numMotorNeurons - 1)
         self.weights[r, c] = random.random() * 2 - 1
 
     def Create_Brain(self, filename):
