@@ -37,10 +37,10 @@ class SIMULATION:
         # TODO REMOVE: This is a temporary hack because of how Josh's multiprocessing works
         # To get the footprint data out for our footprint graph
         if self.directOrGUI == "GUI":
-            footsteps = np.array([self.robot.sensors['FrontLowerLeg'],
-                                  self.robot.sensors['BackLowerLeg'],
-                                  self.robot.sensors['LeftLowerLeg'],
-                                  self.robot.sensors['RightLowerLeg']]
+            footsteps = np.array([self.robot.sensors['FrontLowerLeg'].values,
+                                  self.robot.sensors['BackLowerLeg'].values,
+                                  self.robot.sensors['LeftLowerLeg'].values,
+                                  self.robot.sensors['RightLowerLeg'].values]
             np.save(f"footsteps{self.solutionID}{self.worldID}.npy", footsteps)
 
         if self.directOrGUI == "GUI":
