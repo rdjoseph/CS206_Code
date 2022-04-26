@@ -40,7 +40,7 @@ class SIMULATION:
             footsteps = np.array([self.robot.sensors['FrontLowerLeg'].values,
                                   self.robot.sensors['BackLowerLeg'].values,
                                   self.robot.sensors['LeftLowerLeg'].values,
-                                  self.robot.sensors['RightLowerLeg'].values]
+                                  self.robot.sensors['RightLowerLeg'].values])
             np.save(f"footsteps{self.solutionID}{self.worldID}.npy", footsteps)
 
         if self.directOrGUI == "GUI":

@@ -28,7 +28,7 @@ class PARALLEL_HILL_CLIMBER():
         for currentGeneration in range(numberOfGenerations):
             self.Evolve_For_One_Generation()
             # Record our fitness stats 
-            for idx, parent in enumerate(self.parents):
+            for idx, parent in self.parents.items():
                 self.statistics[currentGeneration][idx] = parent.fitness
 
     def Evolve_For_One_Generation(self):
