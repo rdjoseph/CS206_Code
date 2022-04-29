@@ -49,10 +49,19 @@ class ROBOT:
         """
         # I need to calculate if FrontLeg, BackLeg, RightLeg, or LeftLeg have a sensor value of +1 at any point in time
         # Because the only way they should get stimuli is via the block, this should tell me if the robot hit the block
-        touched_block = int(1 in self.sensors['FrontLeg'].values or
-                            1 in self.sensors['BackLeg'].values or
-                            1 in self.sensors['RightLeg'].values or
-                            1 in self.sensors['LeftLeg'].values)
+        # touched_block = int(1 in self.sensors['FrontLeg'].values or
+        #                     1 in self.sensors['BackLeg'].values or
+        #                     1 in self.sensors['RightLeg'].values or
+        #                     1 in self.sensors['LeftLeg'].values)
+        frontLeg = self.sensors['FrontLeg'].values
+        backLeg  = self.sensors['BackLeg'].values
+        rightLeg = self.sensors['RightLeg'].values
+        leftLeg = self.sensors['LeftLeg'].values
+        touches = (sum(frontLeg[(frontLeg == 1)]) +
+                   sum(rightLeg[(rightLeg == 1)]) +
+                   sum(backLeg[(backLeg == 1)]) +
+                   sum(leftLeg[(leftLeg == 1)]))
+
 
         # Now we want to calculate its y position, which will be used in the total fitness calculation later 
         basePositionAndOrientation = p.getBasePositionAndOrientation(self.robot)
@@ -60,6 +69,6 @@ class ROBOT:
         yPosition = basePosition[1]
         fitnessFile = "tmp" + str(self.myID) + str(self.worldID) + ".txt"
         with open(fitnessFile, "w") as file:
-            file.write(f"{str(touched_block)},{str(yPosition)}")
+            file.write(f"{str(touches)},{str(yPosition)}")
  
         os.system("mv " + fitnessFile + " fitness" + str(self.myID) + str(self.worldID) + ".txt")

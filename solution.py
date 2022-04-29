@@ -45,40 +45,32 @@ class SOLUTION():
 
         with open(fitnessAFile, "r") as file:
             vals = file.read().split(",")
-            A_touched_block = bool(int(vals[0]))
+            A_touched_block = bool(float(vals[0]))
+            A_touches = float(vals[0])
             A_y_position = float(vals[1])
 
         with open(fitnessBFile, "r") as file:
             vals = file.read().split(",")
-            B_touched_block = bool(int(vals[0]))
+            B_touched_block = bool(float(vals[0]))
+            B_touches = float(vals[0])
             B_y_position = float(vals[1])
 
         dA = -1 * (A_y_position - 2.5)  # Diff btwn robo & block in World A, only rewarding negative movement
         dB = B_y_position + 2.5         # Diff btwn robo & block in World B, only rewarding postive movement
 
+        # self.fitness = (dA + dB) / max(1, (A_touches + B_touches))
+
         if A_touched_block and B_touched_block:
-            self.fitness = 2 + dA + dB
-            # F = 2 + d1 + d2
-            # We add two because even in a case where it did not get away from the block,
-            # we want to favor that over not touching the block at all
-        # In the case where a robot has touched a block, we want to start rewarding it for moving *away* from the block, not towards
-        # I am hoping the ratcheting nature of the PHC will allow me to lead the robot by the nose in this fashion
-        # IE first developing walking, then bumping into a block, then fleeing from the block, leading to bumping into both, etc 
+            self.fitness = 2 + ((dA + dB) / 100) / max(1, (A_touches + B_touches))
         elif A_touched_block:
-            self.fitness = 1 + (dA / 100)
+            self.fitness = 1 + ((2 * dA) + dB) / max(1, A_touches)
         elif B_touched_block:
-            self.fitness = 1 + (dB / 100)
+            self.fitness = 1 + (dA + (2 * dB)) / max(1, B_touches)
         else:
-            # In experiments, I've found that evolution gets "stuck"
-            # There's not enough granularity in steps for evolution to
-            # meaningfully improve in one mutation step
-            # This is not 'proper' scaling but I've never seen a robot achieve
-            # more than 30 steps away from origin in 5K timesteps, so this
-            # should work fine
             self.fitness = (dA + dB) / 100
 
 
-        print(f"{self.myID} aggr fit: {self.fitness}; touch A? {A_touched_block}; touch B? {B_touched_block}")
+        print(f"{self.myID} aggr fit: {self.fitness}; touch A? {A_touches}; touch B? {B_touches}")
         os.system("rm " + fitnessAFile)
         os.system("rm " + fitnessBFile)
 
