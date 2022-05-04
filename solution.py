@@ -74,7 +74,7 @@ class SOLUTION():
                                (B_x_position, B_y_position)]
 
 
-        print(f"{self.myID} aggr fit: {self.fitness}; touch A? {A_touched_block}; touch B? {B_touched_block}")
+        # print(f"{self.myID} aggr fit: {self.fitness}; touch A? {A_touched_block}; touch B? {B_touched_block}")
         os.system("rm " + fitnessAFile)
         os.system("rm " + fitnessBFile)
 
@@ -85,7 +85,7 @@ class SOLUTION():
         self.weights[r, c] = random.random() * 2 - 1
 
     def Create_Brain(self, filename):
-        """ Creates a neural network, stored in filename """ 
+        """ Creates a neural network, stored in filename """
         pyrosim.Start_NeuralNetwork(filename)
         # Sensors
         pyrosim.Send_Sensor_Neuron(name=0, linkName="Torso")

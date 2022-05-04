@@ -40,7 +40,7 @@ class PARALLEL_HILL_CLIMBER():
         self.Spawn()
         self.Mutate()
         self.Evaluate(self.children)
-        self.Print()
+        # self.Print()
         self.Select()
 
     def Print(self):
