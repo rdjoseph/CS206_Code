@@ -15,6 +15,7 @@ class SOLUTION():
         # Our initial solution is a matrix of random floating point values
         self.weights = numpy.random.rand(numSensorNeurons, numMotorNeurons)
         self.weights = self.weights * 2 - 1  # Normalize
+        self.final_position = []
 
     def Set_ID(self, id):
         self.myID = id
@@ -45,15 +46,15 @@ class SOLUTION():
 
         with open(fitnessAFile, "r") as file:
             vals = file.read().split(",")
-            A_touched_block = bool(float(vals[0]))
-            A_touches = float(vals[0])
-            A_y_position = float(vals[1])
+            A_touched_block = bool(int(vals[0]))
+            A_x_position = float(vals[1])
+            A_y_position = float(vals[2])
 
         with open(fitnessBFile, "r") as file:
             vals = file.read().split(",")
-            B_touched_block = bool(float(vals[0]))
-            B_touches = float(vals[0])
-            B_y_position = float(vals[1])
+            B_touched_block = bool(int(vals[0]))
+            B_x_position = float(vals[1])
+            B_y_position = float(vals[2])
 
         dA = -1 * (A_y_position - 2.5)  # Diff btwn robo & block in World A, only rewarding negative movement
         dB = B_y_position + 2.5         # Diff btwn robo & block in World B, only rewarding postive movement
@@ -69,8 +70,11 @@ class SOLUTION():
         else:
             self.fitness = (dA + dB) / 100
 
+        self.final_position = [(A_x_position, A_y_position),
+                               (B_x_position, B_y_position)]
 
-        print(f"{self.myID} aggr fit: {self.fitness}; touch A? {A_touches}; touch B? {B_touches}")
+
+        print(f"{self.myID} aggr fit: {self.fitness}; touch A? {A_touched_block}; touch B? {B_touched_block}")
         os.system("rm " + fitnessAFile)
         os.system("rm " + fitnessBFile)
 

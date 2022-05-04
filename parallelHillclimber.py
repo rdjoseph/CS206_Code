@@ -14,6 +14,8 @@ class PARALLEL_HILL_CLIMBER():
         os.system("rm body.urdf")
         # Because the worlds & robot body are only constructed once, I moved them to PHC. No sense writing the same files to disk 100 times per evolutionary session
         self.statistics = np.zeros((numberOfGenerations, populationSize))
+        # What I really want is a numberOfGenerations x populationSize matrix 
+        self.final_positions = []
         self.Create_Robot()
         self.Create_World()
         self.parents = {}
@@ -27,9 +29,12 @@ class PARALLEL_HILL_CLIMBER():
         self.Evaluate(self.parents)
         for currentGeneration in range(numberOfGenerations):
             self.Evolve_For_One_Generation()
-            # Record our fitness stats 
+            # Record our fitness stats
+            final_positions = []
             for idx, parent in self.parents.items():
                 self.statistics[currentGeneration][idx] = parent.fitness
+                final_positions.append(parent.final_position)
+            self.final_positions.append(final_positions)
 
     def Evolve_For_One_Generation(self):
         self.Spawn()
@@ -81,6 +86,9 @@ class PARALLEL_HILL_CLIMBER():
 
     def Write_Statistics(self):
         np.save("generational_fitness.npy", self.statistics)
+        np.save("final_positions.npy", np.array(self.final_positions))
+        bestSol = max(list(self.parents.values()), key=lambda x: x.fitness)
+        np.save("best_controller.npy", np.save(bestSol.weights))
 
     # Note: Joints & Links are relative to their upstream joints/links. You might think, ah, so Torso_FrontLeg is relative to Torso_BackLeg. No, you fool. There is no upstream joint of Torso_FrontLeg because joint/link relationships are like a tree, ie (torso (joint "torso_backleg" backleg) (joint "torso_frontleg" frontleg)). So we define torso_frontleg as an absolute position, and frontleg is relative to that.
     # Torso_FrontLeg joint absolute position [2,0,1]
