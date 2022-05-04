@@ -34,15 +34,6 @@ class SIMULATION:
             self.robot.Think()
             self.robot.Sense(i)
 
-        # TODO REMOVE: This is a temporary hack because of how Josh's multiprocessing works
-        # To get the footprint data out for our footprint graph
-        if self.directOrGUI == "GUI":
-            footsteps = np.array([self.robot.sensors['FrontLowerLeg'].values,
-                                  self.robot.sensors['BackLowerLeg'].values,
-                                  self.robot.sensors['LeftLowerLeg'].values,
-                                  self.robot.sensors['RightLowerLeg'].values])
-            np.save(f"footsteps{self.solutionID}{self.worldID}.npy", footsteps)
-
         if self.directOrGUI == "GUI":
             print("\nFinal neuron values of " + self.solutionID + " in world " + self.worldID)
             self.robot.nn.Print()
