@@ -86,9 +86,9 @@ class PARALLEL_HILL_CLIMBER():
 
     def Write_Statistics(self):
         np.save("generational_fitness.npy", self.statistics)
-        np.save("final_positions.npy", np.array(self.final_positions))
+        np.save("final_positions.npy", np.asarray(self.final_positions))
         bestSol = max(list(self.parents.values()), key=lambda x: x.fitness)
-        np.save("best_controller.npy", np.save(bestSol.weights))
+        np.save("best_controller.npy", np.asarray(bestSol.weights))
 
     # Note: Joints & Links are relative to their upstream joints/links. You might think, ah, so Torso_FrontLeg is relative to Torso_BackLeg. No, you fool. There is no upstream joint of Torso_FrontLeg because joint/link relationships are like a tree, ie (torso (joint "torso_backleg" backleg) (joint "torso_frontleg" frontleg)). So we define torso_frontleg as an absolute position, and frontleg is relative to that.
     # Torso_FrontLeg joint absolute position [2,0,1]
