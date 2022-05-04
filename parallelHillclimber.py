@@ -77,8 +77,10 @@ class PARALLEL_HILL_CLIMBER():
 
     def Show_Best(self):
         bestSol = max(list(self.parents.values()), key=lambda x: x.fitness)
-        print("\n Best solution: ")
-        print(bestSol.weights)
+        print("\n Best Solution Weights ")
+        print(bestSol.sensors_to_hidden)
+        print(bestSol.hidden_to_motors)
+        print("\n Best solution neural net: ")
         print("\n Best fitness: ")
         print(bestSol.fitness)
         input("To proceed to display, strike any key")

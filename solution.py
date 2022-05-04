@@ -5,17 +5,18 @@ import os
 import time
 import sys
 import pyrosim.pyrosim as pyrosim
-from constants import numSensorNeurons, numMotorNeurons
+from constants import numSensorNeurons, numMotorNeurons, numHiddenNeurons
 
 
 class SOLUTION():
     def __init__(self, id):
         self.myID = id
-        
         # Our initial solution is a matrix of random floating point values
-        self.weights = numpy.random.rand(numSensorNeurons, numMotorNeurons)
-        self.weights = self.weights * 2 - 1  # Normalize
+        # self.weights = numpy.random.rand(numSensorNeurons, numMotorNeurons)
+        # self.weights = self.weights * 2 - 1  # Normalize
         self.final_position = []
+        self.sensors_to_hidden = numpy.random.rand(numHiddenNeurons, numSensorNeurons) * 2 - 1
+        self.hidden_to_motors = numpy.random.rand(numHiddenNeurons, numMotorNeurons) * 2 - 1
 
     def Set_ID(self, id):
         self.myID = id
@@ -80,39 +81,47 @@ class SOLUTION():
 
     def Mutate(self):
         # random.randint(a,b) is inclusive of b, unlike most Python things
-        r = random.randint(0, numSensorNeurons - 1)
-        c = random.randint(0, numMotorNeurons - 1)
-        self.weights[r, c] = random.random() * 2 - 1
+        # We'll mutate only one synapse weight at once
+        sth_or_htm = random.randint(0, 1)
+        if sth_or_htm: # Pick one of the sensor-to-hidden-neuron weights to modify 
+            r = random.randint(0, numHiddenNeurons - 1)
+            c = random.randint(0, numSensorNeurons - 1)
+            self.sensors_to_hidden[r, c] = random.random() * 2 - 1
+        else:          # Pick one of the hidden-to-motor-neuron weights
+            r = random.randint(0, numHiddenNeurons - 1)
+            c = random.randint(0, numMotorNeurons - 1)
+            self.hidden_to_motors[r, c] = random.random() * 2 - 1
 
     def Create_Brain(self, filename):
         """ Creates a neural network, stored in filename """
         pyrosim.Start_NeuralNetwork(filename)
         # Sensors
-        pyrosim.Send_Sensor_Neuron(name=0, linkName="Torso")
-        pyrosim.Send_Sensor_Neuron(name=1, linkName="BackLeg")
-        pyrosim.Send_Sensor_Neuron(name=2, linkName="FrontLeg")
-        pyrosim.Send_Sensor_Neuron(name=3, linkName="LeftLeg")
-        pyrosim.Send_Sensor_Neuron(name=4, linkName="RightLeg")
-        pyrosim.Send_Sensor_Neuron(name=5, linkName="FrontLowerLeg")
-        pyrosim.Send_Sensor_Neuron(name=6, linkName="BackLowerLeg")
-        pyrosim.Send_Sensor_Neuron(name=7, linkName="LeftLowerLeg")
-        pyrosim.Send_Sensor_Neuron(name=8, linkName="RightLowerLeg")
+        links = ["Torso", "BackLeg", "FrontLeg", "LeftLeg", "RightLeg", "FrontLowerLeg", "BackLowerLeg", "LeftLowerLeg", "RightLowerLeg"]
+        joints = ["Torso_BackLeg", "Torso_FrontLeg", "Torso_LeftLeg", "Torso_RightLeg", "FrontLeg_FrontLowerLeg", "BackLeg_BackLowerLeg", "LeftLeg_LeftLowerLeg", "RightLeg_RightLowerLeg"]
         
-        # Motor Neurons
-        pyrosim.Send_Motor_Neuron(name=9, jointName="Torso_BackLeg")
-        pyrosim.Send_Motor_Neuron(name=10, jointName="Torso_FrontLeg")
-        pyrosim.Send_Motor_Neuron(name=11, jointName="Torso_LeftLeg")
-        pyrosim.Send_Motor_Neuron(name=12, jointName="Torso_RightLeg")
-        pyrosim.Send_Motor_Neuron(name=13, jointName="FrontLeg_FrontLowerLeg")
-        pyrosim.Send_Motor_Neuron(name=14, jointName="BackLeg_BackLowerLeg")
-        pyrosim.Send_Motor_Neuron(name=15, jointName="LeftLeg_LeftLowerLeg")
-        pyrosim.Send_Motor_Neuron(name=16, jointName="RightLeg_RightLowerLeg")
-        
-        # Set up synapses with weights
-        for currRow in range(numSensorNeurons):
-            for currCol in range(numMotorNeurons):
-                pyrosim.Send_Synapse(sourceNeuronName=currRow,
-                                     targetNeuronName=(currCol + numSensorNeurons),
-                                     weight=self.weights[currRow][currCol])
+        for idx, link in enumerate(links):
+            pyrosim.Send_Sensor_Neuron(name=idx, linkName=link)
+
+        for idx in range(numHiddenNeurons):
+            pyrosim.Send_Hidden_Neuron(name=(idx + numSensorNeurons))
+            
+        for idx, joint in enumerate(joints):
+            pyrosim.Send_Motor_Neuron(name=(idx + numHiddenNeurons + numSensorNeurons),
+                                      jointName=joint)
+
+        # Wire synapses from sensors to the hidden layer
+        for sidx in range(numSensorNeurons):
+            for hidx in range(numHiddenNeurons):
+                # Wire from sensor neuron to hidden neuron 
+                pyrosim.Send_Synapse(sourceNeuronName=sidx,
+                                     targetNeuronName=(hidx + numSensorNeurons),
+                                     weight=self.sensors_to_hidden[hidx][sidx])
+
+        for hidx in range(numHiddenNeurons):
+            for midx in range(numMotorNeurons):
+                # Wire from hidden neuron to motor neuron 
+                pyrosim.Send_Synapse(sourceNeuronName=(hidx + numSensorNeurons),
+                                     targetNeuronName=(midx + numHiddenNeurons + numSensorNeurons),
+                                     weight=self.hidden_to_motors[hidx][midx])
 
         pyrosim.End()
