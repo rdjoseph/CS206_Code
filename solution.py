@@ -61,11 +61,11 @@ class SOLUTION():
         # self.fitness = (dA + dB) / max(1, (A_touches + B_touches))
 
         if A_touched_block and B_touched_block:
-            self.fitness = 2 + ((dA + dB) / 100) / max(1, (A_touches + B_touches))
+            self.fitness = 2 + dA + dB
         elif A_touched_block:
-            self.fitness = 1 + ((2 * dA) + dB) / max(1, A_touches)
+            self.fitness = 1 + dA + (dB / 100)
         elif B_touched_block:
-            self.fitness = 1 + (dA + (2 * dB)) / max(1, B_touches)
+            self.fitness = 1 + dB + (dA / 100)
         else:
             self.fitness = (dA + dB) / 100
 
