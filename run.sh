@@ -6,7 +6,7 @@ for i in {1..2}
 do
     # We want to run both tests, and then move the generated data to the appropriate folders
     cd VariantA
-    python3 search.py
+    python search.py
     status=$?
     cd ../
     mv "VariantA/generational_fitness.npy" "test_data/${i}_A_gen_fitness.npy"
@@ -16,7 +16,7 @@ do
     echo "Run ${i}, variant A done ${status}, ${comp_time}" >> "status.txt"
 
     cd VariantB 
-    python3 search.py
+    python search.py
     status=$?
     cd ../
     mv "VariantB/generational_fitness.npy" "test_data/${i}_B_gen_fitness.npy"
