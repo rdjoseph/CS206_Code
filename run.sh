@@ -2,7 +2,7 @@
 
 touch "status.txt"
 echo $(date) >> status.txt
-for i in {4..10}
+for i in {1..2}
 do
     # We want to run both tests, and then move the generated data to the appropriate folders
     cd VariantA
