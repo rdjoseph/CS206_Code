@@ -5,8 +5,9 @@ A/B Testing Instructions
 This project uses Python 3.6.9 and requires Numpy & Pybullet to be installed via pip
 
 1. Make overall folder 
-2. Make three folders: VariantA, VariantB, test_data
-3. Clone origin master into VariantA; Variant_B into VariantB
+2. Make three folders within overall folder: VariantA, VariantB, test_data
+3. Clone origin master into VariantA; git clone origin Variant_B into VariantB
+    A. May have to git clone origin into VariantB, git fetch Variant_B, git checkout Variant_B
 4. Copy run.sh from VariantA into folder above VariantA (over-arching folder)
 5. run `./run.sh`
 
