@@ -1,7 +1,7 @@
 import numpy as np
 
 pi = np.pi
-iterations = 15000
+iterations = 12000
 numberOfGenerations = 50
 populationSize = 20
 timepause = 0.0001
